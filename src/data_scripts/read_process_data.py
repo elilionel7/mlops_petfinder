@@ -1,3 +1,7 @@
+
+# def load_data(url):
 import pandas as pd
-def load_data(url):
+
+# Load the dataset
+
     
