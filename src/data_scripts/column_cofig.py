@@ -3,7 +3,7 @@ dict
 key: what sort of encoding needed to be performed
 values: columns that need to be encoded base of their key(encoding)
 """
-cols_config = {
+COLS_CONFIG = {
     "one_hot_encode_cols": ["Type", "Gender"],
     "label_encode_cols": ["Vaccinated", "Sterilized", "Color1", "Color2"],
     "ordinal_encode_cols": {
