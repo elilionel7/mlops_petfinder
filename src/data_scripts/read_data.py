@@ -1,33 +1,45 @@
-
-from google.cloud import storage
-import requests
+import io
+import logging
 import pandas as pd
-from io import StringIO
+from google.cloud import storage
 
-def get_data(url = "https://storage.googleapis.com/cloud-samples-data/ai-platform-unified/datasets/tabular/petfinder-tabular-classification.csv"):
-    """
-    Fetches data from a specified URL (default is set to a Google Cloud Storage bucket) 
-    and reads it into a Pandas DataFrame.
-    
-    Parameters:
-    - url (str): The URL pointing to the CSV dataset. Default is set to the Petfinder dataset in GCS.
-    
-    Returns:
-    - pd.DataFrame: A DataFrame containing the data if fetched successfully.
-    - str: An error message if data retrieval failed.
-    """
+logging.basicConfig(level=logging.INFO)
 
-    response = requests.get(url)
 
-    
-    if response.status_code == 200:
-        data = response.text
+class GCSDataLoader:
+    def __init__(self, bucket_name="cloud-samples-data"):
+        self.bucket_name = bucket_name
+        self.storage_client = self._create_storage_client()
 
-        
-        df = pd.read_csv(StringIO(data))
-        
-    else:
-        return "Failed to retrieve the data."
-    return df
+    def _create_storage_client(self):
+        """Create a storage client."""
+        return storage.Client()
+
+    def _download_blob_as_string(self, blob_name):
+        """Download a blob from GCS as a string."""
+        bucket = self.storage_client.bucket(self.bucket_name)
+        blob = bucket.blob(blob_name)
+        content = blob.download_as_string()
+        logging.info(f"Downloaded blob '{blob_name}' successfully")
+        return content
+
+    def _read_csv_from_string(self, csv_string):
+        """Read CSV content from a string and return DataFrame."""
+        dataframe = pd.read_csv(io.StringIO(csv_string.decode("utf-8")))
+        logging.info("Successfully read CSV content and created DataFrame")
+        return dataframe
+
+    def get_data(
+        self,
+        file_name="ai-platform-unified/datasets/tabular/petfinder-tabular-classification.csv",
+    ):
+        """Get data from GCS and return as DataFrame."""
+        csv_string = self._download_blob_as_string(file_name)
+        df = self._read_csv_from_string(csv_string)
+        return df
+
+
 if __name__ == "__main__":
-    get_data()
+    loader = GCSDataLoader()
+    data = loader.get_data()
+    # print(data.head())
