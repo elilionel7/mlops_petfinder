@@ -3,7 +3,9 @@ import logging
 import pandas as pd
 from google.cloud import storage
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class GCSDataLoader:
@@ -30,8 +32,18 @@ class GCSDataLoader:
         file_name="ai-platform-unified/datasets/tabular/petfinder-tabular-classification.csv",
     ):
         """Get data from GCS and return as DataFrame."""
+        logging.info(f"Loading data from {self.bucket_name}/{file_name}")
         csv_string = self._download_blob_as_string(file_name)
         df = self._read_csv_from_string(csv_string)
+
+        
+        logging.info(f"DataFrame shape: {df.shape}")
+        logging.info(f"DataFrame columns: {df.columns}")
+        logging.info("DataFrame's content:\n" + str(df.head()))
+
+        logging.info(
+            f"Data has been successfully downloaded from {self.bucket_name}/{file_name}"
+        )
         return df
 
 
