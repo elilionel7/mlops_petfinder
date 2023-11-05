@@ -1,5 +1,3 @@
 google-cloud-storage
 jupyter
-notebook
-notebook_shim
 pandas
