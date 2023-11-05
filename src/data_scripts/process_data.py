@@ -1,7 +1,12 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder, OrdinalEncoder
+import logging
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from src.data_scripts.read_data import get_data
 from src.data_scripts.column_config import COLS_CONFIG
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class DataPreprocessor:
@@ -25,6 +30,8 @@ class DataPreprocessor:
         Args:
             cols (list of str): List of column names to be one-hot encoded.
         """
+        logging.info("One-hot encoding columns: %s", cols)
+
         for col in cols:
             self.df = pd.get_dummies(self.df, columns=[col], prefix=col)
 
@@ -35,6 +42,7 @@ class DataPreprocessor:
         Args:
             cols (list): List of column names to be label encoded.
         """
+        logging.info("Label encoding columns: %s", cols)
         for col in cols:
             encoder = LabelEncoder()
             self.df[col] = encoder.fit_transform(self.df[col])
@@ -47,6 +55,7 @@ class DataPreprocessor:
             cols (dict): A dictionary where the key is the column name
                         and the value is a list of ordered values for that column.
         """
+        logging.info("Ordinally encoding columns: %s", cols.keys())
         for col, order in cols.items():
             encoder = OrdinalEncoder(categories=[order])
             self.df[col] = encoder.fit_transform(self.df[[col]])
@@ -58,6 +67,9 @@ class DataPreprocessor:
         Args:
             col (str, optional): Name of the target column to be converted. Default is 'Adopted'.
         """
+        logging.info("Converting target column '%s' to binary values", col)
+        logging.info("DataFrame's content:\n" + str(self.df.head()))
+
         self.df[col] = self.df[col].map({"yes": 1, "no": 0})
 
     def count_encode_cols(self, col="Breed1"):
@@ -81,11 +93,18 @@ class DataPreprocessor:
         Returns:
             pd.DataFrame: The preprocessed DataFrame.
         """
+        logging.info("Starting preprocessing of the DataFrame")
+
         self.one_hot_encode_cols(config["one_hot_encode_cols"])
         self.label_encode_cols(config["label_encode_cols"])
         self.ordinally_encode_cols(config["ordinal_encode_cols"])
         self.count_encode_cols(config["count_encode_col"])
         self.binary_encode_target_cols(config["target_col"])
+
+        logging.info(f"DataFrame shape: {self.df.shape}")
+        logging.info(f"DataFrame columns: {self.df.columns}")
+        logging.info("DataFrame's content:\n" + str(self.df.head()))
+        logging.info("Finished preprocessing of the DataFrame")
         return self.df
 
 
