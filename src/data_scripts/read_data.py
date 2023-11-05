@@ -9,11 +9,7 @@ logging.basicConfig(level=logging.INFO)
 class GCSDataLoader:
     def __init__(self, bucket_name="cloud-samples-data"):
         self.bucket_name = bucket_name
-        self.storage_client = self._create_storage_client()
-
-    def _create_storage_client(self):
-        """Create a storage client."""
-        return storage.Client()
+        self.storage_client = storage.Client()
 
     def _download_blob_as_string(self, blob_name):
         """Download a blob from GCS as a string."""
