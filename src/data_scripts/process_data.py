@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
-from src.data_scripts.read_data import get_data
+from .read_data import GCSDataLoader
 from src.data_scripts.column_config import COLS_CONFIG
 
 logging.basicConfig(
@@ -109,6 +109,8 @@ class DataPreprocessor:
 
 
 if __name__ == "__main__":
-    data = get_data()
+    loader = GCSDataLoader()
+    data = loader.get_data()
+
     preprocessor = DataPreprocessor(data)
     preprocessed_df = preprocessor.preprocess_dataframe(COLS_CONFIG)
