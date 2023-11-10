@@ -1,8 +1,10 @@
 import pandas as pd
 import logging
+import category_encoders as ce
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from .read_data import GCSDataLoader
 from src.data_scripts.column_config import COLS_CONFIG
+
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -23,17 +25,25 @@ class DataPreprocessor:
         """
         self.df = df
 
+    
+
+    
+
     def one_hot_encode_cols(self, cols):
         """
-        One-hot encode specified columns of the dataframe.
+        Use Category Encoders library to one-hot encode specified columns.
 
         Args:
             cols (list of str): List of column names to be one-hot encoded.
         """
         logging.info("One-hot encoding columns: %s", cols)
 
-        for col in cols:
-            self.df = pd.get_dummies(self.df, columns=[col], prefix=col)
+        # Initialize the one-hot encoder
+        encoder = ce.OneHotEncoder(cols=cols, use_cat_names=True) #pd.get_dummies
+
+        # Fit and transform the DataFrame
+        self.df = encoder.fit_transform(self.df)
+
 
     def label_encode_cols(self, cols):
         """
@@ -58,7 +68,7 @@ class DataPreprocessor:
         logging.info("Ordinally encoding columns: %s", cols.keys())
         for col, order in cols.items():
             encoder = OrdinalEncoder(categories=[order])
-            self.df[col] = encoder.fit_transform(self.df[[col]])
+            self.df[col] = encoder.fit_transform(self.df[[col]]).astype(int)
 
     def binary_encode_target_cols(self, col="Adopted"):
         """
@@ -70,7 +80,7 @@ class DataPreprocessor:
         logging.info("Converting target column '%s' to binary values", col)
         logging.info("DataFrame's content:\n" + str(self.df.head()))
 
-        self.df[col] = self.df[col].map({"yes": 1, "no": 0})
+        self.df[col] = self.df[col].map({"Yes": 1, "No": 0})
 
     def count_encode_cols(self, col="Breed1"):
         """
