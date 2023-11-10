@@ -25,10 +25,6 @@ class DataPreprocessor:
         """
         self.df = df
 
-    
-
-    
-
     def one_hot_encode_cols(self, cols):
         """
         Use Category Encoders library to one-hot encode specified columns.
@@ -39,11 +35,10 @@ class DataPreprocessor:
         logging.info("One-hot encoding columns: %s", cols)
 
         # Initialize the one-hot encoder
-        encoder = ce.OneHotEncoder(cols=cols, use_cat_names=True) #pd.get_dummies
+        encoder = ce.OneHotEncoder(cols=cols, use_cat_names=True)  # pd.get_dummies
 
         # Fit and transform the DataFrame
         self.df = encoder.fit_transform(self.df)
-
 
     def label_encode_cols(self, cols):
         """
