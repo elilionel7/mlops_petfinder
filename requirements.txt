@@ -1,3 +1,6 @@
 google-cloud-storage
 jupyter
 pandas
+xgboost
+scikit-learn
+imbalanced-learn
