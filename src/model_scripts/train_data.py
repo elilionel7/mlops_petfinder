@@ -160,4 +160,4 @@ if __name__ == "__main__":
         "learning_rate": 0.1,
     }
     trainer = PetAdoptionTrainer(model_params=custom_params)
-    trainer.main(use_smote=False)
+    trainer.main(use_smote=True)
