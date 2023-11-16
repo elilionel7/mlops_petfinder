@@ -35,11 +35,19 @@ class PetAdoptionTrainer:
         Splits the dataset into training, validation, and test sets.
 
         Args:
-            test_size: The feature matrix.
-            validation_size: The target vector.
+            test_size: Proportion of the dataset to include in the test split. Defaults to 0.2.
+
+        validation_size: Proportion of the temporary set (original dataset minus the test set) to include in the validation split.  Defaults to 0.2.
+
 
         Returns:
-            tuple: The train, validation, and test feature matrices and target vectors.
+        None: The method doesn't return anything but sets four attributes of the class:
+            self.X_train: Features for the training set.
+            self.X_val: Features for the validation set.
+            self.X_test: Features for the test set.
+            self.y_train: Target variable for the training set.
+            self.y_val: Target variable for the validation set.
+            self.y_test: Target variable for the test set.
         """
 
         X = self.preprocessed_data.drop(columns=["Adopted"])
@@ -52,14 +60,25 @@ class PetAdoptionTrainer:
         )
 
     def train_model(self, use_cv=False, cv_folds=5):
-        # """
-        #         Trains an XGBoost model using the preprocessed data.
+        """
+        Trains the model using the provided training dataset.
 
-        #         Uses early stopping based on performance on the validation set.
+        This method offers two training approaches: cross-validation and standard training. 
+        If cross-validation (CV) is chosen, the method performs k-fold CV on the training data 
+        and logs the F1 scores for each fold. Otherwise, it trains the model on the entire training 
+        set and evaluates using the validation set.
 
-        #         Sets:
-        #         - self.model: Trained XGBoost model.
-        #         """
+        Args:
+        use_cv (bool, optional): Determines the training approach. If set to True, the method 
+            uses cross-validation. If False, it uses standard training. Defaults to False.
+
+        cv_folds (int, optional): The number of folds to use for cross-validation. 
+            This argument is only relevant if use_cv is True. Defaults to 5.
+
+        Returns:
+        None: The method doesn't return any value but updates the class attributes related to the model 
+            and its performance.
+        """
         if use_cv:
             logging.info("Starting cross-validation...")
             self.model = xgb.XGBClassifier(**self.model_params)
@@ -93,7 +112,7 @@ class PetAdoptionTrainer:
 
                 Returns:
                 - Evaluation metrics: f1, accuracy and recall
-        #"""
+        """
         f1 = f1_score(self.y_test, y_pred)
         accuracy = accuracy_score(self.y_test, y_pred)
         recall = recall_score(self.y_test, y_pred)
