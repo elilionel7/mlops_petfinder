@@ -1,11 +1,28 @@
-const modelLoader = require('./modelLoader');
+const { predict } = require('./modelLoader');
+const users = new Map(); // Simple in-memory user storage
 
-exports.makePrediction = async (req, res) => {
+const makePrediction = async (req, res) => {
   try {
-    const data = req.body;
-    const prediction = await modelLoader.predict(data);
+    const prediction = await predict(req.body);
     res.json({ prediction });
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).send('Error in prediction');
   }
+};
+
+const createUser = (req, res) => {
+  const { username, details } = req.body;
+  if (users.has(username)) {
+    res.status(400).send('User already exists');
+  } else {
+    users.set(username, details);
+    res.status(200).send('User created successfully');
+    console.log(users);
+  }
+};
+
+module.exports = {
+  makePrediction,
+  createUser,
 };

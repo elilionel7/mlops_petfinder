@@ -39,6 +39,7 @@ class DataPreprocessor:
 
         # Fit and transform the DataFrame
         self.df = encoder.fit_transform(self.df)
+        
 
     def label_encode_cols(self, cols):
         """
