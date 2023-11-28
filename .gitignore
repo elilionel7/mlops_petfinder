@@ -3,3 +3,5 @@ venv/
 .ipynb_checkpoints/
 output/
 **/__pycache__/
+node_modules
+.DS_Store

@@ -39,6 +39,7 @@ class DataPreprocessor:
 
         # Fit and transform the DataFrame
         self.df = encoder.fit_transform(self.df)
+        
 
     def label_encode_cols(self, cols):
         """
@@ -110,6 +111,35 @@ class DataPreprocessor:
         logging.info(f"DataFrame columns: {self.df.columns}")
         logging.info("DataFrame's content:\n" + str(self.df.head()))
         logging.info("Finished preprocessing of the DataFrame")
+        return self.df
+
+    def preprocess_for_prediction(self, config=COLS_CONFIG):
+        """
+        Preprocess the input DataFrame for prediction, using the specified configuration.
+
+        This method is similar to preprocess_dataframe but does not handle the target column,
+        as it's meant for preparing data for making predictions.
+
+        Args:
+            config (dict): A dictionary containing the configuration for preprocessing.
+                           It includes keys for one-hot encoding, label encoding, ordinal encoding,
+                           and count encoding.
+
+        Returns:
+            pd.DataFrame: The preprocessed DataFrame ready for prediction.
+        """
+        logging.info("Starting preprocessing of the DataFrame for prediction")
+
+        # Apply the same preprocessing steps, but exclude the target column related step
+        self.one_hot_encode_cols(config["one_hot_encode_cols"])
+        self.label_encode_cols(config["label_encode_cols"])
+        self.ordinally_encode_cols(config["ordinal_encode_cols"])
+        self.count_encode_cols(config["count_encode_col"])
+
+        logging.info(f"DataFrame shape for prediction: {self.df.shape}")
+        logging.info(f"DataFrame columns for prediction: {self.df.columns}")
+        logging.info("DataFrame's content for prediction:\n" + str(self.df.head()))
+        logging.info("Finished preprocessing of the DataFrame for prediction")
         return self.df
 
 
