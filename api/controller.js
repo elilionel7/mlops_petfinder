@@ -1,5 +1,5 @@
 const { predict } = require('./modelLoader');
-const users = new Map(); // Simple in-memory user storage
+const users = new Map();
 
 const makePrediction = async (req, res) => {
   try {
